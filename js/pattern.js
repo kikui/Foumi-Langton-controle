@@ -6,7 +6,27 @@ class Pattern {
         $($.proxy(this.onReady, this))
     }
     onReady() {
+        this.initPatern()
+        $("#Pattern").change(this.drawCondition)
         console.log("Pattern.onReady")
+    }
+    initPatern(){
+        $(".condition").show()
+        $.getJSON("https://api.myjson.com/bins/crrrn", (e) => { 
+            for (let i in e.patterns) {
+                let item = e.patterns[i]
+                $('<option value="'+item.name+'">'+item.name+'</option>').data("stepsList", item.steps).appendTo("#Pattern")
+            }
+            this.drawCondition()
+        })
+    }
+    drawCondition(){
+        $("#CurrentPattern > tbody").children().remove()
+        let patternSlected = $("#Pattern option:selected").data('stepsList')
+        for(let i in patternSlected){
+            let item = patternSlected[i]
+            $("#CurrentPattern > tbody").append(Pattern.GetHtmlRow(item))
+        }
     }
     static GetSelect(json, selected) {
         let html = '<select>'
